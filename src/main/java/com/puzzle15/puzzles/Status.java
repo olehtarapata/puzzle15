@@ -1,10 +1,10 @@
-package com.puzzle15;
+package com.puzzle15.puzzles;
 
 /**
  * @author Oleg Tarapata (oleh.tarapata@gmail.com)
  */
 public enum Status {
-	OK,
-	WIN,
-	ILLEGAL
+    OK,
+    ILLEGAL_PUZZLE_NUMBER,
+    NOT_NEIGHBORS
 }
