@@ -3,6 +3,7 @@ package com.puzzle15.terminal;
 import com.puzzle15.puzzles.Puzzles;
 import com.puzzle15.puzzles.Status;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
@@ -11,24 +12,47 @@ import java.util.Scanner;
  */
 public class TerminalUI {
 
-    private static final String QUIT_COMMAND = "quit";
+    static final String EXIT_COMMAND = "q";
 
-    private final Puzzles puzzles = null;
+    static final String EXIT_MESSAGE = "Bye!";
+
+    static final String WIN_MESSAGE = "Congratulations! You win the game!";
+
+    private final Puzzles puzzles;
+
+    private final InputStream input;
+
+    private final PrintStream output;
+
+    public TerminalUI(final Puzzles puzzles) {
+        this(puzzles, System.in, System.out);
+    }
+
+    public TerminalUI(final Puzzles puzzles, PrintStream output) {
+        this(puzzles, System.in, output);
+    }
+
+    public TerminalUI(final Puzzles puzzles, final InputStream input, final PrintStream output) {
+        this.puzzles = puzzles;
+        this.input = input;
+        this.output = output;
+    }
 
     public void handleInput() {
-        System.out.println("Welcome to Puzzles 15!");
-        try (final Scanner scanner = new Scanner(System.in)) {
+        output.println("Welcome to Puzzles 15!");
+        try (final Scanner scanner = new Scanner(input)) {
             while (true) {
-                System.out.println();
-                printPuzzles(puzzles, System.out);
+                output.println();
+                printPuzzles();
+                output.println();
                 if (puzzles.isWin()) {
-                    System.out.println("Congratulations! You win the game!");
+                    output.println(WIN_MESSAGE);
                     return;
                 }
-                System.out.println(String.format("Please enter a puzzle number to move or '%s': ", QUIT_COMMAND));
+                output.print(String.format("Please enter a puzzle number to move or '%s': ", EXIT_COMMAND));
                 final String command = scanner.nextLine().trim();
-                if (QUIT_COMMAND.equalsIgnoreCase(command)) {
-                    System.out.println("Bye!");
+                if (EXIT_COMMAND.equalsIgnoreCase(command)) {
+                    output.println(EXIT_MESSAGE);
                     return;
                 }
                 final int puzzleNumber;
@@ -36,28 +60,28 @@ public class TerminalUI {
                     puzzleNumber = Integer.parseInt(command);
                     final Status status = puzzles.move(puzzleNumber);
                     if (Status.ILLEGAL_PUZZLE_NUMBER == status) {
-                        System.out.println("Illegal puzzle number: " + puzzleNumber);
+                        output.println("Illegal puzzle number: " + puzzleNumber);
                     }
                     if (Status.NOT_NEIGHBORS == status) {
-                        System.out.println("Puzzle not neighbor to empty place");
+                        output.println("Puzzle not neighbor to empty place: " + puzzleNumber);
                     }
                 } catch (final NumberFormatException e) {
-                    System.out.println("Impossible to parse puzzles number: " + command);
+                    output.println("Impossible to parse puzzles number: " + command);
                 }
             }
         }
     }
 
-    public void printPuzzles(final Puzzles puzzles, final PrintStream writer) {
+    void printPuzzles() {
         final int[] puzzlesArray = puzzles.puzzles();
         for (int i = 0; i < Puzzles.CELLS_COUNT; i++) {
             if (puzzlesArray[i] == Puzzles.EMPTY_PUZZLE_NUMBER) {
-                writer.println("    ");
+                output.print("    ");
             } else {
-                writer.printf("%1$4s", puzzlesArray[i]);
+                output.printf("%1$4s", puzzlesArray[i]);
             }
             if ((i + 1) % Puzzles.COLUMNS_COUNT == 0) {
-                writer.println();
+                output.println();
             }
         }
     }

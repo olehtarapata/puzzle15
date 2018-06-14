@@ -1,26 +1,36 @@
 package com.puzzle15.puzzles;
 
-import java.util.Arrays;
-
 /**
+ * Puzzles 15 game engine implementation.
+ * Not thread safe.
+ *
  * @author Oleg Tarapata (oleh.tarapata@gmail.com)
  */
 public class PuzzlesImpl implements Puzzles {
 
-    private final int[] puzzles;
+    private final PuzzlesFactory factory;
 
-    private final int[] puzzleToPosition;
+    private int[] puzzles;
 
-    public PuzzlesImpl(final int[] puzzles) {
-        this.puzzles = puzzles;
-        this.puzzleToPosition = new int[CELLS_COUNT];
-        for (int i = 0; i < CELLS_COUNT; i++) {
-            puzzleToPosition[puzzles[i]] = i;
+    private int[] puzzleToPosition;
+
+    public PuzzlesImpl(final PuzzlesFactory factory) {
+        this.factory = factory;
+    }
+
+    private void checkIfPuzzlesGenerated() {
+        if (puzzles == null) {
+            this.puzzles = this.factory.generate();
+            this.puzzleToPosition = new int[CELLS_COUNT];
+            for (int i = 0; i < CELLS_COUNT; i++) {
+                puzzleToPosition[puzzles[i]] = i;
+            }
         }
     }
 
     @Override
     public Status move(final int puzzleNumber) {
+        checkIfPuzzlesGenerated();
         if (puzzleNumber <= 0 || puzzleNumber >= CELLS_COUNT) {
             return Status.ILLEGAL_PUZZLE_NUMBER;
         }
@@ -38,6 +48,7 @@ public class PuzzlesImpl implements Puzzles {
 
     @Override
     public boolean isWin() {
+        checkIfPuzzlesGenerated();
         for (int i = 0; i < CELLS_COUNT; i++) {
             if (puzzles[i] != (i + 1) % CELLS_COUNT) {
                 return false;
@@ -48,6 +59,12 @@ public class PuzzlesImpl implements Puzzles {
 
     @Override
     public int[] puzzles() {
-        return Arrays.copyOf(puzzles, Puzzles.CELLS_COUNT);
+        checkIfPuzzlesGenerated();
+        return puzzles;
+    }
+
+    int[] puzzleToPosition() {
+        checkIfPuzzlesGenerated();
+        return puzzleToPosition;
     }
 }

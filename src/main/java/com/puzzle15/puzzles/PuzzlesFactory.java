@@ -5,5 +5,5 @@ package com.puzzle15.puzzles;
  */
 public interface PuzzlesFactory {
 
-    Puzzles generate();
+    int[] generate();
 }

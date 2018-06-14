@@ -21,7 +21,7 @@ public final class PuzzlePositionUtil {
             return Math.abs(position1Column - position2Column) == 1;
         }
         if (position1Column == position2Column) {
-            return Math.abs(position1Raw - position2Raw) == COLUMNS_COUNT;
+            return Math.abs(position1Raw - position2Raw) == 1;
         }
         return false;
     }
