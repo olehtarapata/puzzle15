@@ -24,11 +24,11 @@ public class TerminalUITest {
 
     @Test
     public void checkPrintPuzzlesFormat() throws IOException {
-        final PipedInputStream pipedInputStream = new PipedInputStream();
-        final PrintStream printStream = new PrintStream(new PipedOutputStream(pipedInputStream));
-        new TerminalUI(new PuzzlesImpl(new WinPuzzlesFactory()), printStream).printPuzzles();
-        printStream.close();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(pipedInputStream));
+        final PipedInputStream output = new PipedInputStream();
+        final PrintStream terminalOutput = new PrintStream(new PipedOutputStream(output));
+        new TerminalUI(new PuzzlesImpl(new WinPuzzlesFactory()), terminalOutput).printPuzzles();
+        terminalOutput.close();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(output));
         assertThat(reader.readLine(), is("   1   2   3   4"));
         assertThat(reader.readLine(), is("   5   6   7   8"));
         assertThat(reader.readLine(), is("   9  10  11  12"));
