@@ -18,6 +18,16 @@ public class TerminalUI {
 
     static final String WIN_MESSAGE = "Congratulations! You win the game!";
 
+    static final String IMPOSSIBLE_TO_PARSE_MESSAGE = "Impossible to parse puzzles number: ";
+
+    static final String ILLEGAL_PUZZLE_MESSAGE = "Illegal puzzle number: ";
+
+    static final String PUZZLE_NOT_NEIGHBOR_MESSAGE = "Puzzle is not neighbor to empty place: ";
+
+    static final String PROMPT_MESSAGE = String.format("Please enter a puzzle number to move or '%s' to exit: ", EXIT_COMMAND);
+
+    static final String WELCOME_MESSAGE = "Welcome to Puzzles 15!";
+
     private final Puzzles puzzles;
 
     private final InputStream input;
@@ -39,7 +49,7 @@ public class TerminalUI {
     }
 
     public void handleInput() {
-        output.println("Welcome to Puzzles 15!");
+        output.println(WELCOME_MESSAGE);
         try (final Scanner scanner = new Scanner(input)) {
             while (true) {
                 output.println();
@@ -49,7 +59,7 @@ public class TerminalUI {
                     output.println(WIN_MESSAGE);
                     return;
                 }
-                output.print(String.format("Please enter a puzzle number to move or '%s': ", EXIT_COMMAND));
+                output.print(PROMPT_MESSAGE);
                 final String command = scanner.nextLine().trim();
                 if (EXIT_COMMAND.equalsIgnoreCase(command)) {
                     output.println(EXIT_MESSAGE);
@@ -60,13 +70,13 @@ public class TerminalUI {
                     puzzleNumber = Integer.parseInt(command);
                     final Status status = puzzles.move(puzzleNumber);
                     if (Status.ILLEGAL_PUZZLE_NUMBER == status) {
-                        output.println("Illegal puzzle number: " + puzzleNumber);
+                        output.println(ILLEGAL_PUZZLE_MESSAGE + puzzleNumber);
                     }
                     if (Status.NOT_NEIGHBORS == status) {
-                        output.println("Puzzle not neighbor to empty place: " + puzzleNumber);
+                        output.println(PUZZLE_NOT_NEIGHBOR_MESSAGE + puzzleNumber);
                     }
                 } catch (final NumberFormatException e) {
-                    output.println("Impossible to parse puzzles number: " + command);
+                    output.println(IMPOSSIBLE_TO_PARSE_MESSAGE + command);
                 }
             }
         }
