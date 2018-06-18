@@ -1,5 +1,7 @@
 package com.puzzle15.puzzles;
 
+import com.puzzle15.puzzles.factory.WinPuzzlesFactory;
+import com.puzzle15.puzzles.state.ModifiablePuzzlesState;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -9,11 +11,11 @@ public class WinPuzzlesFactoryTest {
 
     @Test
     public void checkWinPuzzle() {
-        final int[] puzzles = new WinPuzzlesFactory().generate();
-        assertThat(puzzles.length, is(Puzzles.CELLS_COUNT));
-        assertThat(puzzles[puzzles.length - 1], is(0));
-        for (int i = 1; i < Puzzles.CELLS_COUNT; i++) {
-            assertThat(puzzles[i - 1], is(i));
+        final ModifiablePuzzlesState state = new WinPuzzlesFactory().generate();
+        for (int i = 0; i < state.rawsCount(); i++) {
+            for (int j = 0; j < state.columnsCount(); j++) {
+                assertThat(state.get(new Position(i, j)), is((i * state.columnsCount() + j + 1) % state.cellsCount()));
+            }
         }
     }
 }

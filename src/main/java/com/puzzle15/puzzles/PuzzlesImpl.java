@@ -1,5 +1,9 @@
 package com.puzzle15.puzzles;
 
+import com.puzzle15.puzzles.factory.PuzzlesFactory;
+import com.puzzle15.puzzles.state.ModifiablePuzzlesState;
+import com.puzzle15.puzzles.state.PuzzlesState;
+
 /**
  * Puzzles 15 game engine implementation.
  * Not thread safe.
@@ -8,63 +12,45 @@ package com.puzzle15.puzzles;
  */
 public class PuzzlesImpl implements Puzzles {
 
-    private final PuzzlesFactory factory;
-
-    private int[] puzzles;
-
-    private int[] puzzleToPosition;
+    private final ModifiablePuzzlesState state;
 
     public PuzzlesImpl(final PuzzlesFactory factory) {
-        this.factory = factory;
+        this(factory.generate());
     }
 
-    private void checkIfPuzzlesGenerated() {
-        if (puzzles == null) {
-            this.puzzles = this.factory.generate();
-            this.puzzleToPosition = new int[CELLS_COUNT];
-            for (int i = 0; i < CELLS_COUNT; i++) {
-                puzzleToPosition[puzzles[i]] = i;
-            }
-        }
+    public PuzzlesImpl(final ModifiablePuzzlesState state) {
+        this.state = state;
     }
 
     @Override
     public Status move(final int puzzleNumber) {
-        checkIfPuzzlesGenerated();
-        if (puzzleNumber <= 0 || puzzleNumber >= CELLS_COUNT) {
+        if (puzzleNumber <= EMPTY_PUZZLE_NUMBER || puzzleNumber >= state.rawsCount() * state.columnsCount()) {
             return Status.ILLEGAL_PUZZLE_NUMBER;
         }
-        int emptyPosition = puzzleToPosition[0];
-        int puzzlePosition = puzzleToPosition[puzzleNumber];
-        if (!PuzzlePositionUtil.isNeighbors(emptyPosition, puzzlePosition)) {
+        final Position emptyPosition = state.getPosition(EMPTY_PUZZLE_NUMBER);
+        final Position position = state.getPosition(puzzleNumber);
+        if (!emptyPosition.isNeighbor(position)) {
             return Status.NOT_NEIGHBORS;
         }
-        puzzleToPosition[0] = puzzlePosition;
-        puzzleToPosition[puzzleNumber] = emptyPosition;
-        puzzles[emptyPosition] = puzzleNumber;
-        puzzles[puzzlePosition] = 0;
+        state.swap(emptyPosition, position);
         return Status.OK;
     }
 
     @Override
     public boolean isWin() {
-        checkIfPuzzlesGenerated();
-        for (int i = 0; i < CELLS_COUNT; i++) {
-            if (puzzles[i] != (i + 1) % CELLS_COUNT) {
-                return false;
+        final int cellsCount = state.rawsCount() * state.columnsCount();
+        for (int i = 0; i < state.rawsCount(); i++) {
+            for (int j = 0; j < state.columnsCount(); j++) {
+                if (state.get(new Position(i, j)) != (i * state.columnsCount() + j + 1) % cellsCount) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     @Override
-    public int[] puzzles() {
-        checkIfPuzzlesGenerated();
-        return puzzles;
-    }
-
-    int[] puzzleToPosition() {
-        checkIfPuzzlesGenerated();
-        return puzzleToPosition;
+    public PuzzlesState puzzles() {
+        return state;
     }
 }

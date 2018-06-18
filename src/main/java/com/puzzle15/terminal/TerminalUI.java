@@ -1,7 +1,9 @@
 package com.puzzle15.terminal;
 
+import com.puzzle15.puzzles.Position;
 import com.puzzle15.puzzles.Puzzles;
 import com.puzzle15.puzzles.Status;
+import com.puzzle15.puzzles.state.PuzzlesState;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -83,16 +85,17 @@ public class TerminalUI {
     }
 
     void printPuzzles() {
-        final int[] puzzlesArray = puzzles.puzzles();
-        for (int i = 0; i < Puzzles.CELLS_COUNT; i++) {
-            if (puzzlesArray[i] == Puzzles.EMPTY_PUZZLE_NUMBER) {
-                output.print("    ");
-            } else {
-                output.printf("%1$4s", puzzlesArray[i]);
+        final PuzzlesState state = puzzles.puzzles();
+        for (int i = 0; i < state.rawsCount(); i++) {
+            for (int j = 0; j < state.columnsCount(); j++) {
+                final int puzzleNumber = state.get(new Position(i, j));
+                if (puzzleNumber == Puzzles.EMPTY_PUZZLE_NUMBER) {
+                    output.print("    ");
+                } else {
+                    output.printf("%1$4s", puzzleNumber);
+                }
             }
-            if ((i + 1) % Puzzles.COLUMNS_COUNT == 0) {
-                output.println();
-            }
+            output.println();
         }
     }
 }

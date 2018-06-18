@@ -1,26 +1,13 @@
 package com.puzzle15.puzzles;
 
+import com.puzzle15.puzzles.state.PuzzlesState;
+
 /**
  * Puzzles 15 game engine.
  *
  * @author Oleg Tarapata (oleh.tarapata@gmail.com)
  */
 public interface Puzzles {
-
-    /**
-     * Total cells count.
-     */
-    int CELLS_COUNT = 16;
-
-    /**
-     * Total raws count.
-     */
-    int RAWS_COUNT = 4;
-
-    /**
-     * Total columns count.
-     */
-    int COLUMNS_COUNT = 4;
 
     /**
      * Empty puzzle number.
@@ -40,7 +27,7 @@ public interface Puzzles {
      *
      * @return puzzles
      */
-    int[] puzzles();
+    PuzzlesState puzzles();
 
     /**
      * Check if puzzle state is in win position.

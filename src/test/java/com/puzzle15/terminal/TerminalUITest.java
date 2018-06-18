@@ -1,10 +1,11 @@
 package com.puzzle15.terminal;
 
-import com.puzzle15.puzzles.PuzzlePositionUtil;
+import com.puzzle15.puzzles.Position;
 import com.puzzle15.puzzles.Puzzles;
 import com.puzzle15.puzzles.PuzzlesImpl;
-import com.puzzle15.puzzles.ShuffledPuzzlesFactory;
-import com.puzzle15.puzzles.WinPuzzlesFactory;
+import com.puzzle15.puzzles.factory.ShuffledPuzzlesFactory;
+import com.puzzle15.puzzles.factory.WinPuzzlesFactory;
+import com.puzzle15.puzzles.state.ModifiablePuzzlesState;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -98,15 +99,18 @@ public class TerminalUITest {
 
     @Test
     public void puzzlesNotNeighbors() throws IOException {
-        final Puzzles puzzles = new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory()));
-        final int emptyPosition = findEmptyPosition(puzzles);
-        final int[] puzzlesArray = puzzles.puzzles();
+        final ModifiablePuzzlesState state = new ShuffledPuzzlesFactory(new WinPuzzlesFactory()).generate();
+        final Puzzles puzzles = new PuzzlesImpl(state);
+        final Position emptyPosition = state.getPosition(Puzzles.EMPTY_PUZZLE_NUMBER);
         int puzzleNumber = 0;
-        for (int i = 0; i < Puzzles.CELLS_COUNT; i++) {
-            if (!PuzzlePositionUtil.isNeighbors(emptyPosition, i)) {
-                if (puzzlesArray[i] != Puzzles.EMPTY_PUZZLE_NUMBER) {
-                    puzzleNumber = puzzlesArray[i];
-                    break;
+        for (int i = 0; i < state.rawsCount(); i++) {
+            for (int j = 0; j < state.columnsCount(); j++) {
+                final Position position = new Position(i, j);
+                if (!emptyPosition.isNeighbor(position)) {
+                    puzzleNumber = state.get(position);
+                    if (puzzleNumber != Puzzles.EMPTY_PUZZLE_NUMBER) {
+                        break;
+                    }
                 }
             }
         }
@@ -143,15 +147,5 @@ public class TerminalUITest {
             result.add(currentLine);
         }
         return result;
-    }
-
-    private int findEmptyPosition(final Puzzles puzzles) {
-        final int[] puzzlesArray = puzzles.puzzles();
-        for (int i = 0; i < puzzlesArray.length; i++) {
-            if (puzzlesArray[i] == Puzzles.EMPTY_PUZZLE_NUMBER) {
-                return i;
-            }
-        }
-        throw new IllegalArgumentException("Puzzles do not contain empty place");
     }
 }
