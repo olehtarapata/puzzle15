@@ -40,13 +40,15 @@ public class SolvedPuzzlesFactory implements PuzzlesFactory {
         }
         final Position nextPosition = position.next(state.columnsCount());
         int result = 0;
+        int j = nextPosition.getColumn();
         for (int i = nextPosition.getRaw(); i < state.rawsCount(); i++) {
-            for (int j = nextPosition.getColumn(); j < state.columnsCount(); j++) {
+            for (; j < state.columnsCount(); j++) {
                 final int currentPuzzleNumber = state.get(new Position(i, j));
                 if (currentPuzzleNumber != Puzzles.EMPTY_PUZZLE_NUMBER && currentPuzzleNumber < puzzleNumber) {
                     result++;
                 }
             }
+            j = 0;
         }
         return result;
     }

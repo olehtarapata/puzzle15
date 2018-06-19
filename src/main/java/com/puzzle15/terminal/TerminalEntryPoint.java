@@ -10,6 +10,8 @@ import com.puzzle15.puzzles.factory.WinPuzzlesFactory;
  */
 public class TerminalEntryPoint implements Runnable {
 
+    private static final int SIZE = 4;
+
     public static void main(String[] args) {
         new TerminalEntryPoint().run();
     }
@@ -20,7 +22,7 @@ public class TerminalEntryPoint implements Runnable {
                 new PuzzlesImpl(
                         new SolvedPuzzlesFactory(
                                 new ShuffledPuzzlesFactory(
-                                        new WinPuzzlesFactory()
+                                        new WinPuzzlesFactory(SIZE, SIZE)
                                 )
                         ).generate()
                 )

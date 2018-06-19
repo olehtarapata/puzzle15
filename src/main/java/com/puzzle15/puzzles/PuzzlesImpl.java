@@ -24,7 +24,7 @@ public class PuzzlesImpl implements Puzzles {
 
     @Override
     public Status move(final int puzzleNumber) {
-        if (puzzleNumber <= EMPTY_PUZZLE_NUMBER || puzzleNumber >= state.rawsCount() * state.columnsCount()) {
+        if (puzzleNumber <= EMPTY_PUZZLE_NUMBER || puzzleNumber >= state.cellsCount()) {
             return Status.ILLEGAL_PUZZLE_NUMBER;
         }
         final Position emptyPosition = state.getPosition(EMPTY_PUZZLE_NUMBER);
@@ -38,7 +38,7 @@ public class PuzzlesImpl implements Puzzles {
 
     @Override
     public boolean isWin() {
-        final int cellsCount = state.rawsCount() * state.columnsCount();
+        final int cellsCount = state.cellsCount();
         for (int i = 0; i < state.rawsCount(); i++) {
             for (int j = 0; j < state.columnsCount(); j++) {
                 if (state.get(new Position(i, j)) != (i * state.columnsCount() + j + 1) % cellsCount) {

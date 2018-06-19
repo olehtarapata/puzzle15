@@ -10,6 +10,8 @@ public interface PuzzlesState {
 
     int get(Position position);
 
+    Position getPosition(int puzzleNumber);
+
     default int cellsCount() {
         return rawsCount() * columnsCount();
     }

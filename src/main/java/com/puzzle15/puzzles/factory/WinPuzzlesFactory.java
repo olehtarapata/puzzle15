@@ -5,16 +5,12 @@ import com.puzzle15.puzzles.state.ModifiablePuzzlesStateImpl;
 
 public final class WinPuzzlesFactory implements PuzzlesFactory {
 
-    private static final int DEFAULT_RAWS_COUNT = 4;
-
-    private static final int DEFAULT_COLUMNS_COUNT = 4;
-
     private final int rawsCount;
 
     private final int columnsCount;
 
-    public WinPuzzlesFactory() {
-        this(DEFAULT_RAWS_COUNT, DEFAULT_COLUMNS_COUNT);
+    public WinPuzzlesFactory(final int size) {
+        this(size, size);
     }
 
     public WinPuzzlesFactory(final int rawsCount, final int columnsCount) {
