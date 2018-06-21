@@ -1,7 +1,8 @@
-package com.puzzle15.puzzles.state;
+package com.puzzle15.puzzles.functions;
 
 import com.puzzle15.puzzles.Position;
 import com.puzzle15.puzzles.Puzzles;
+import com.puzzle15.puzzles.state.PuzzlesState;
 
 public class InversionCountImpl implements InversionCount {
 

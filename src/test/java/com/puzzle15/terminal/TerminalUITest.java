@@ -34,11 +34,13 @@ import static org.junit.Assert.assertThat;
 
 public class TerminalUITest {
 
+    private static final int SIZE = TerminalEntryPoint.SIZE;
+
     @Test
     public void checkPrintPuzzlesFormat() throws IOException {
         final PipedInputStream output = new PipedInputStream();
         final PrintStream terminalOutput = new PrintStream(new PipedOutputStream(output));
-        new TerminalUI(new PuzzlesImpl(new WinPuzzlesFactory()), terminalOutput).printPuzzles();
+        new TerminalUI(new PuzzlesImpl(new WinPuzzlesFactory(SIZE)), terminalOutput).printPuzzles();
         terminalOutput.close();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(output));
         assertThat(reader.readLine(), is("   1   2   3   4"));
@@ -52,7 +54,7 @@ public class TerminalUITest {
     public void checkPrintWinMessage() throws IOException {
         final PipedInputStream output = new PipedInputStream();
         final PrintStream terminalOutput = new PrintStream(new PipedOutputStream(output));
-        new TerminalUI(new PuzzlesImpl(new WinPuzzlesFactory()), terminalOutput).handleInput();
+        new TerminalUI(new PuzzlesImpl(new WinPuzzlesFactory(SIZE)), terminalOutput).handleInput();
         terminalOutput.close();
         assertThat(readLastLine(output), is(WIN_MESSAGE));
     }
@@ -62,7 +64,7 @@ public class TerminalUITest {
         final InputStream terminalInput = new ByteArrayInputStream(EXIT_COMMAND.getBytes(StandardCharsets.UTF_8));
         final PipedInputStream output = new PipedInputStream();
         final PrintStream terminalOutput = new PrintStream(new PipedOutputStream(output));
-        new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory())), terminalInput, terminalOutput).handleInput();
+        new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory(SIZE))), terminalInput, terminalOutput).handleInput();
         terminalOutput.close();
         assertThat(readLastLine(output), is(PROMPT_MESSAGE + EXIT_MESSAGE));
     }
@@ -74,7 +76,7 @@ public class TerminalUITest {
         final InputStream terminalInput = new ByteArrayInputStream(inputString.getBytes(StandardCharsets.UTF_8));
         final PipedInputStream output = new PipedInputStream();
         final PrintStream terminalOutput = new PrintStream(new PipedOutputStream(output));
-        new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory())), terminalInput, terminalOutput).handleInput();
+        new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory(SIZE))), terminalInput, terminalOutput).handleInput();
         terminalOutput.close();
         final List<String> allLines = readAllLines(output);
         assertThat(allLines.contains(WELCOME_MESSAGE), is(true));
@@ -89,7 +91,7 @@ public class TerminalUITest {
         final InputStream terminalInput = new ByteArrayInputStream(inputString.getBytes(StandardCharsets.UTF_8));
         final PipedInputStream output = new PipedInputStream();
         final PrintStream terminalOutput = new PrintStream(new PipedOutputStream(output));
-        new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory())), terminalInput, terminalOutput).handleInput();
+        new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory(SIZE))), terminalInput, terminalOutput).handleInput();
         terminalOutput.close();
         final List<String> allLines = readAllLines(output);
         assertThat(allLines.contains(WELCOME_MESSAGE), is(true));
@@ -99,7 +101,7 @@ public class TerminalUITest {
 
     @Test
     public void puzzlesNotNeighbors() throws IOException {
-        final ModifiablePuzzlesState state = new ShuffledPuzzlesFactory(new WinPuzzlesFactory()).generate();
+        final ModifiablePuzzlesState state = new ShuffledPuzzlesFactory(new WinPuzzlesFactory(SIZE)).generate();
         final Puzzles puzzles = new PuzzlesImpl(state);
         final Position emptyPosition = state.getPosition(Puzzles.EMPTY_PUZZLE_NUMBER);
         int puzzleNumber = 0;

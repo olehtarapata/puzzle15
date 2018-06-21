@@ -1,4 +1,4 @@
-package com.puzzle15.puzzles.state;
+package com.puzzle15.puzzles.functions;
 
 public interface IsWinState {
 

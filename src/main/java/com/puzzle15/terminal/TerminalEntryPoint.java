@@ -2,7 +2,7 @@ package com.puzzle15.terminal;
 
 import com.puzzle15.puzzles.PuzzlesImpl;
 import com.puzzle15.puzzles.factory.ShuffledPuzzlesFactory;
-import com.puzzle15.puzzles.factory.SolvedPuzzlesFactory;
+import com.puzzle15.puzzles.factory.SolvablePuzzlesFactory;
 import com.puzzle15.puzzles.factory.WinPuzzlesFactory;
 
 /**
@@ -10,7 +10,7 @@ import com.puzzle15.puzzles.factory.WinPuzzlesFactory;
  */
 public class TerminalEntryPoint implements Runnable {
 
-    private static final int SIZE = 4;
+    public static final int SIZE = 4;
 
     public static void main(String[] args) {
         new TerminalEntryPoint().run();
@@ -20,7 +20,7 @@ public class TerminalEntryPoint implements Runnable {
     public void run() {
         new TerminalUI(
                 new PuzzlesImpl(
-                        new SolvedPuzzlesFactory(
+                        new SolvablePuzzlesFactory(
                                 new ShuffledPuzzlesFactory(
                                         new WinPuzzlesFactory(SIZE, SIZE)
                                 )

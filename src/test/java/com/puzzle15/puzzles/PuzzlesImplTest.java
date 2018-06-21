@@ -4,6 +4,7 @@ import com.puzzle15.puzzles.factory.WinPuzzlesFactory;
 import com.puzzle15.puzzles.state.ModifiablePuzzlesState;
 import org.junit.Test;
 
+import static com.puzzle15.puzzles.TestConstants.SIZE;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -11,12 +12,12 @@ public class PuzzlesImplTest {
 
     @Test
     public void checkIsWin() {
-        assertThat(new PuzzlesImpl(new WinPuzzlesFactory().generate()).isWin(), is(true));
+        assertThat(new PuzzlesImpl(new WinPuzzlesFactory(SIZE).generate()).isWin(), is(true));
     }
 
     @Test
     public void moveIllegalNumber() {
-        final ModifiablePuzzlesState state = new WinPuzzlesFactory().generate();
+        final ModifiablePuzzlesState state = new WinPuzzlesFactory(SIZE).generate();
         final PuzzlesImpl puzzles = new PuzzlesImpl(state);
         assertThat(puzzles.move(-10), is(Status.ILLEGAL_PUZZLE_NUMBER));
         assertThat(puzzles.move(0), is(Status.ILLEGAL_PUZZLE_NUMBER));
@@ -26,10 +27,10 @@ public class PuzzlesImplTest {
 
     @Test
     public void moveNotNeighbors() {
-        final ModifiablePuzzlesState state = new WinPuzzlesFactory().generate();
+        final ModifiablePuzzlesState state = new WinPuzzlesFactory(SIZE).generate();
         final PuzzlesImpl puzzles = new PuzzlesImpl(state);
         for (int i = 1; i < state.cellsCount(); i++) {
-            if (i != 12 && i != 15) {
+            if (i != state.cellsCount() - state.columnsCount() && i != state.cellsCount() - 1) {
                 assertThat("Puzzle number " + i, puzzles.move(i), is(Status.NOT_NEIGHBORS));
             }
         }
@@ -37,21 +38,27 @@ public class PuzzlesImplTest {
 
     @Test
     public void moveHorizontallyOk() {
-        final ModifiablePuzzlesState state = new WinPuzzlesFactory().generate();
+        final ModifiablePuzzlesState state = new WinPuzzlesFactory(SIZE).generate();
         final PuzzlesImpl puzzles = new PuzzlesImpl(state);
-        assertThat(puzzles.move(15), is(Status.OK));
+        assertThat(puzzles.move(state.cellsCount() - 1), is(Status.OK));
         assertThat(puzzles.isWin(), is(false));
-        assertThat(state.get(new Position(14, state.rawsCount(), state.columnsCount())), is(0));
-        assertThat(state.get(new Position(15, state.rawsCount(), state.columnsCount())), is(15));
+        assertThat(state.get(new Position(state.rawsCount() - 1, state.columnsCount() - 2)), is(0));
+        assertThat(
+                state.get(new Position(state.rawsCount() - 1, state.columnsCount() - 1)),
+                is(state.cellsCount() - 1)
+        );
     }
 
     @Test
     public void moveVerticallyOk() {
-        final ModifiablePuzzlesState state = new WinPuzzlesFactory().generate();
+        final ModifiablePuzzlesState state = new WinPuzzlesFactory(SIZE).generate();
         final PuzzlesImpl puzzles = new PuzzlesImpl(state);
-        assertThat(puzzles.move(12), is(Status.OK));
+        assertThat(puzzles.move(state.cellsCount() - state.columnsCount()), is(Status.OK));
         assertThat(puzzles.isWin(), is(false));
-        assertThat(state.get(new Position(11, state.rawsCount(), state.columnsCount())), is(0));
-        assertThat(state.get(new Position(15, state.rawsCount(), state.columnsCount())), is(12));
+        assertThat(state.get(new Position(state.rawsCount() - 2, state.columnsCount() - 1)), is(0));
+        assertThat(
+                state.get(new Position(state.rawsCount() - 1, state.columnsCount() - 1)),
+                is(state.cellsCount() - state.columnsCount())
+        );
     }
 }
