@@ -8,21 +8,39 @@ import com.puzzle15.puzzles.factory.WinPuzzlesFactory;
 /**
  * @author Oleg Tarapata (oleh.tarapata@gmail.com)
  */
-public class TerminalEntryPoint implements Runnable {
-
-    public static final int SIZE = 4;
+public class TerminalEntryPoint {
 
     public static void main(String[] args) {
-        new TerminalEntryPoint().run();
+        if (args.length == 0 || args.length > 1) {
+            printUsage();
+            return;
+        }
+        final int size;
+        try {
+            size = Integer.parseInt(args[0]);
+        } catch (final NumberFormatException e) {
+            System.out.println("Impossible to parse: " + args[0]);
+            printUsage();
+            return;
+        }
+        if (size < 2 || size > 10) {
+            System.out.println("Invalid size: " + size);
+            printUsage();
+            return;
+        }
+        new TerminalEntryPoint().run(size);
     }
 
-    @Override
-    public void run() {
+    private static void printUsage() {
+        System.out.println("Usage: <size> (from 2 to 10)");
+    }
+
+    private void run(final int size) {
         new TerminalUI(
                 new PuzzlesImpl(
                         new SolvablePuzzlesFactory(
                                 new ShuffledPuzzlesFactory(
-                                        new WinPuzzlesFactory(SIZE, SIZE)
+                                        new WinPuzzlesFactory(size)
                                 )
                         ).generate()
                 )

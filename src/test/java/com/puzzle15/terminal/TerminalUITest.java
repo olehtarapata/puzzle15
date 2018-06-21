@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.puzzle15.terminal.TerminalUI.CLEAR_LINE;
 import static com.puzzle15.terminal.TerminalUI.EXIT_COMMAND;
 import static com.puzzle15.terminal.TerminalUI.EXIT_MESSAGE;
 import static com.puzzle15.terminal.TerminalUI.ILLEGAL_PUZZLE_MESSAGE;
@@ -34,7 +35,7 @@ import static org.junit.Assert.assertThat;
 
 public class TerminalUITest {
 
-    private static final int SIZE = TerminalEntryPoint.SIZE;
+    private static final int SIZE = 4;
 
     @Test
     public void checkPrintPuzzlesFormat() throws IOException {
@@ -56,7 +57,7 @@ public class TerminalUITest {
         final PrintStream terminalOutput = new PrintStream(new PipedOutputStream(output));
         new TerminalUI(new PuzzlesImpl(new WinPuzzlesFactory(SIZE)), terminalOutput).handleInput();
         terminalOutput.close();
-        assertThat(readLastLine(output), is(WIN_MESSAGE));
+        assertThat(readLastLine(output), is(CLEAR_LINE + WIN_MESSAGE));
     }
 
     @Test
@@ -66,7 +67,7 @@ public class TerminalUITest {
         final PrintStream terminalOutput = new PrintStream(new PipedOutputStream(output));
         new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory(SIZE))), terminalInput, terminalOutput).handleInput();
         terminalOutput.close();
-        assertThat(readLastLine(output), is(PROMPT_MESSAGE + EXIT_MESSAGE));
+        assertThat(readLastLine(output), is(CLEAR_LINE + PROMPT_MESSAGE + CLEAR_LINE + EXIT_MESSAGE));
     }
 
     @Test
@@ -79,9 +80,9 @@ public class TerminalUITest {
         new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory(SIZE))), terminalInput, terminalOutput).handleInput();
         terminalOutput.close();
         final List<String> allLines = readAllLines(output);
-        assertThat(allLines.contains(WELCOME_MESSAGE), is(true));
-        assertThat(allLines.contains(PROMPT_MESSAGE + IMPOSSIBLE_TO_PARSE_MESSAGE + puzzleNumber), is(true));
-        assertThat(allLines.contains(PROMPT_MESSAGE + EXIT_MESSAGE), is(true));
+        assertThat(allLines.contains(String.format(WELCOME_MESSAGE, 15)), is(true));
+        assertThat(allLines.contains(CLEAR_LINE + PROMPT_MESSAGE + CLEAR_LINE + IMPOSSIBLE_TO_PARSE_MESSAGE + puzzleNumber), is(true));
+        assertThat(allLines.contains(CLEAR_LINE + PROMPT_MESSAGE + CLEAR_LINE + EXIT_MESSAGE), is(true));
     }
 
     @Test
@@ -94,9 +95,9 @@ public class TerminalUITest {
         new TerminalUI(new PuzzlesImpl(new ShuffledPuzzlesFactory(new WinPuzzlesFactory(SIZE))), terminalInput, terminalOutput).handleInput();
         terminalOutput.close();
         final List<String> allLines = readAllLines(output);
-        assertThat(allLines.contains(WELCOME_MESSAGE), is(true));
-        assertThat(allLines.contains(PROMPT_MESSAGE + ILLEGAL_PUZZLE_MESSAGE + puzzleNumber), is(true));
-        assertThat(allLines.contains(PROMPT_MESSAGE + EXIT_MESSAGE), is(true));
+        assertThat(allLines.contains(String.format(WELCOME_MESSAGE, 15)), is(true));
+        assertThat(allLines.contains(CLEAR_LINE + PROMPT_MESSAGE + CLEAR_LINE + ILLEGAL_PUZZLE_MESSAGE + puzzleNumber), is(true));
+        assertThat(allLines.contains(CLEAR_LINE + PROMPT_MESSAGE + CLEAR_LINE + EXIT_MESSAGE), is(true));
     }
 
     @Test
@@ -123,9 +124,12 @@ public class TerminalUITest {
         new TerminalUI(puzzles, terminalInput, terminalOutput).handleInput();
         terminalOutput.close();
         final List<String> allLines = readAllLines(output);
-        assertThat(allLines.contains(WELCOME_MESSAGE), is(true));
-        assertThat(allLines.contains(PROMPT_MESSAGE + PUZZLE_NOT_NEIGHBOR_MESSAGE + puzzleNumber), is(true));
-        assertThat(allLines.contains(PROMPT_MESSAGE + EXIT_MESSAGE), is(true));
+        System.out.println(allLines);
+        System.out.println(String.format(WELCOME_MESSAGE, 15).length());
+        System.out.println(allLines.get(0).length());
+        assertThat(allLines.contains(String.format(WELCOME_MESSAGE, 15)), is(true));
+        assertThat(allLines.contains(CLEAR_LINE + PROMPT_MESSAGE + CLEAR_LINE + PUZZLE_NOT_NEIGHBOR_MESSAGE + puzzleNumber), is(true));
+        assertThat(allLines.contains(CLEAR_LINE + PROMPT_MESSAGE + CLEAR_LINE + EXIT_MESSAGE), is(true));
     }
 
     private String readLastLine(final PipedInputStream output) throws IOException {

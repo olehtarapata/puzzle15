@@ -28,7 +28,9 @@ public class TerminalUI {
 
     static final String PROMPT_MESSAGE = String.format("Please enter a puzzle number to move or '%s' to exit: ", EXIT_COMMAND);
 
-    static final String WELCOME_MESSAGE = "Welcome to Puzzles 15!";
+    static final String WELCOME_MESSAGE = "Welcome to Puzzles %s!";
+
+    static final String CLEAR_LINE = "\033[K";
 
     private final Puzzles puzzles;
 
@@ -51,20 +53,24 @@ public class TerminalUI {
     }
 
     public void handleInput() {
-        output.println(WELCOME_MESSAGE);
+        // clear the console
+        output.println("\033[H\033[2J");
+        output.printf(WELCOME_MESSAGE, puzzles.puzzles().cellsCount() - 1);
+        output.println();
+        final String upCommand = "\033[" + (puzzles.puzzles().rawsCount() + 4) + "A";
         try (final Scanner scanner = new Scanner(input)) {
             while (true) {
                 output.println();
                 printPuzzles();
                 output.println();
                 if (puzzles.isWin()) {
-                    output.println(WIN_MESSAGE);
+                    output.println(CLEAR_LINE + WIN_MESSAGE);
                     return;
                 }
-                output.print(PROMPT_MESSAGE);
+                output.print(CLEAR_LINE + PROMPT_MESSAGE);
                 final String command = scanner.nextLine().trim();
                 if (EXIT_COMMAND.equalsIgnoreCase(command)) {
-                    output.println(EXIT_MESSAGE);
+                    output.println(CLEAR_LINE + EXIT_MESSAGE);
                     return;
                 }
                 final int puzzleNumber;
@@ -72,14 +78,18 @@ public class TerminalUI {
                     puzzleNumber = Integer.parseInt(command);
                     final Status status = puzzles.move(puzzleNumber);
                     if (Status.ILLEGAL_PUZZLE_NUMBER == status) {
-                        output.println(ILLEGAL_PUZZLE_MESSAGE + puzzleNumber);
+                        output.println(CLEAR_LINE + ILLEGAL_PUZZLE_MESSAGE + puzzleNumber);
                     }
                     if (Status.NOT_NEIGHBORS == status) {
-                        output.println(PUZZLE_NOT_NEIGHBOR_MESSAGE + puzzleNumber);
+                        output.println(CLEAR_LINE + PUZZLE_NOT_NEIGHBOR_MESSAGE + puzzleNumber);
+                    }
+                    if (Status.OK == status) {
+                        output.println(CLEAR_LINE);
                     }
                 } catch (final NumberFormatException e) {
-                    output.println(IMPOSSIBLE_TO_PARSE_MESSAGE + command);
+                    output.println(CLEAR_LINE + IMPOSSIBLE_TO_PARSE_MESSAGE + command);
                 }
+                output.print(upCommand);
             }
         }
     }
