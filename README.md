@@ -1,10 +1,10 @@
 # puzzle15
 
-##How to install
+## How to install
 
 Java 8 or above is required
 ```
-wget https://github.com/olegtarapata/puzzle15/releases/download/1.0/puzzle15.jar
+wget https://github.com/olegtarapata/puzzle15/releases/download/1.1/puzzle15.jar
 java -jar puzzle15.jar
 ```
 
