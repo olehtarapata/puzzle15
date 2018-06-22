@@ -34,11 +34,11 @@ public class TerminalUI {
 
     static final String CURSOR_UP = Character.toString((char) 27) + "[A";
 
-    static final String CURSOR_DOWN = "\027[B";
+    static final String CURSOR_DOWN = Character.toString((char) 27) + "[B";
 
-    static final String CURSOR_FORWARD = "\027[C";
+    static final String CURSOR_FORWARD = Character.toString((char) 27) + "[C";
 
-    static final String CURSOR_BACK = "\027[D";
+    static final String CURSOR_BACK = Character.toString((char) 27) + "[D";
 
     private final Puzzles puzzles;
 
@@ -95,7 +95,7 @@ public class TerminalUI {
                         output.println(CLEAR_LINE);
                     }
                 } catch (final NumberFormatException e) {
-                    String commandToWrite = Character.toString(command.charAt(0)) + " " + command.charAt(1) + " " + command.charAt(2);
+                    String commandToWrite = command;
                     if (command.equals(CURSOR_UP)) {
                         commandToWrite = "cursor up ";
                     }
