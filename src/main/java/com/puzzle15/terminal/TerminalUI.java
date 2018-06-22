@@ -32,6 +32,14 @@ public class TerminalUI {
 
     static final String CLEAR_LINE = "\033[K";
 
+    static final String CURSOR_UP = Character.toString((char) 27) + "[A";
+
+    static final String CURSOR_DOWN = "\027[B";
+
+    static final String CURSOR_FORWARD = "\027[C";
+
+    static final String CURSOR_BACK = "\027[D";
+
     private final Puzzles puzzles;
 
     private final InputStream input;
@@ -68,7 +76,7 @@ public class TerminalUI {
                     return;
                 }
                 output.print(CLEAR_LINE + PROMPT_MESSAGE);
-                final String command = scanner.nextLine().trim();
+                final String command = scanner.nextLine();
                 if (EXIT_COMMAND.equalsIgnoreCase(command)) {
                     output.println(CLEAR_LINE + EXIT_MESSAGE);
                     return;
@@ -87,7 +95,20 @@ public class TerminalUI {
                         output.println(CLEAR_LINE);
                     }
                 } catch (final NumberFormatException e) {
-                    output.println(CLEAR_LINE + IMPOSSIBLE_TO_PARSE_MESSAGE + command);
+                    String commandToWrite = Character.toString(command.charAt(0)) + " " + command.charAt(1) + " " + command.charAt(2);
+                    if (command.equals(CURSOR_UP)) {
+                        commandToWrite = "cursor up ";
+                    }
+                    if (command.equals(CURSOR_DOWN)) {
+                        commandToWrite = "cursor down";
+                    }
+                    if (command.equals(CURSOR_BACK)) {
+                        commandToWrite = "cursor back";
+                    }
+                    if (command.equals(CURSOR_FORWARD)) {
+                        commandToWrite = "cursor forward";
+                    }
+                    output.println(CLEAR_LINE + IMPOSSIBLE_TO_PARSE_MESSAGE + commandToWrite);
                 }
                 output.print(upCommand);
             }
