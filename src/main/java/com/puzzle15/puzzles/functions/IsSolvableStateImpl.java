@@ -7,27 +7,29 @@ public class IsSolvableStateImpl implements IsSolvableState {
 
     private final PuzzlesState state;
 
-    private final boolean isEvenSize;
+    private final boolean isOddSize;
 
     public IsSolvableStateImpl(final PuzzlesState state) {
         this.state = state;
         if (state.rawsCount() != state.columnsCount()) {
             throw new IllegalArgumentException("Apply only for square puzzles");
         }
-        isEvenSize = state.rawsCount() % 2 == 0;
+        isOddSize = state.rawsCount() % 2 == 1;
     }
 
     @Override
     public boolean isSolvable() {
-        int sum = state.getPosition(Puzzles.EMPTY_PUZZLE_NUMBER).getRaw() + 1;
+        int inversionsCount = 0;
         for (int i = 1; i < state.cellsCount(); i++) {
-            sum += new InversionCountImpl(state, i).value();
+            inversionsCount += new InversionCountImpl(state, i).value();
         }
-        final boolean isEvenSum = sum % 2 == 0;
-        if (isEvenSize) {
-            return isEvenSum;
+        if (isOddSize) {
+            return inversionsCount % 2 == 0;
+        }
+        if (state.getPosition(Puzzles.EMPTY_PUZZLE_NUMBER).getRaw() % 2 == 0) {
+            return inversionsCount % 2 == 1;
         } else {
-            return !isEvenSum;
+            return inversionsCount % 2 == 0;
         }
     }
 }
