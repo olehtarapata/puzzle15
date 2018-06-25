@@ -23,6 +23,14 @@ public interface Puzzles {
     Status move(int puzzleNumber);
 
     /**
+     * Move empty place in {@see direction}.
+     *
+     * @param direction direction
+     * @return status
+     */
+    Status move(Direction direction);
+
+    /**
      * Get puzzles state.
      *
      * @return puzzles

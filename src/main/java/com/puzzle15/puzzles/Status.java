@@ -6,5 +6,6 @@ package com.puzzle15.puzzles;
 public enum Status {
     OK,
     ILLEGAL_PUZZLE_NUMBER,
-    NOT_NEIGHBORS
+    NOT_NEIGHBORS,
+    OUT_OF_BORDER
 }

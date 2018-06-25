@@ -42,6 +42,38 @@ public class PuzzlesImpl implements Puzzles {
     }
 
     @Override
+    public Status move(final Direction direction) {
+        final Position emptyPosition = state.getPosition(EMPTY_PUZZLE_NUMBER);
+        Position newPosition = null;
+        if (Direction.UP == direction) {
+            if (emptyPosition.getRaw() == 0) {
+                return Status.OUT_OF_BORDER;
+            }
+            newPosition = new Position(emptyPosition.getRaw() - 1, emptyPosition.getColumn());
+        }
+        if (Direction.DOWN == direction) {
+            if (emptyPosition.getRaw() == state.rawsCount() - 1) {
+                return Status.OUT_OF_BORDER;
+            }
+            newPosition = new Position(emptyPosition.getRaw() + 1, emptyPosition.getColumn());
+        }
+        if (Direction.LEFT == direction) {
+            if (emptyPosition.getColumn() == 0) {
+                return Status.OUT_OF_BORDER;
+            }
+            newPosition = new Position(emptyPosition.getRaw(), emptyPosition.getColumn() - 1);
+        }
+        if (Direction.RIGHT == direction) {
+            if (emptyPosition.getColumn() == state.columnsCount() - 1) {
+                return Status.OUT_OF_BORDER;
+            }
+            newPosition = new Position(emptyPosition.getRaw(), emptyPosition.getColumn() + 1);
+        }
+        state.swap(emptyPosition, newPosition);
+        return Status.OK;
+    }
+
+    @Override
     public boolean isWin() {
         return isWinState.isWin();
     }

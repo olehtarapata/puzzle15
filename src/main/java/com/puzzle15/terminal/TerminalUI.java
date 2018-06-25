@@ -1,5 +1,6 @@
 package com.puzzle15.terminal;
 
+import com.puzzle15.puzzles.Direction;
 import com.puzzle15.puzzles.Position;
 import com.puzzle15.puzzles.Puzzles;
 import com.puzzle15.puzzles.Status;
@@ -7,7 +8,9 @@ import com.puzzle15.puzzles.state.PuzzlesState;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * @author Oleg Tarapata (oleh.tarapata@gmail.com)
@@ -26,7 +29,7 @@ public class TerminalUI {
 
     static final String PUZZLE_NOT_NEIGHBOR_MESSAGE = "Puzzle is not neighbor to empty place: ";
 
-    static final String PROMPT_MESSAGE = String.format("Please enter a puzzle number to move or '%s' to exit: ", EXIT_COMMAND);
+    static final String PROMPT_MESSAGE = String.format("Use arrows or a puzzle number to move or enter '%s' to exit: ", EXIT_COMMAND);
 
     static final String WELCOME_MESSAGE = "Welcome to Puzzles %s!";
 
@@ -67,6 +70,9 @@ public class TerminalUI {
         output.println();
         final String upCommand = "\033[" + (puzzles.puzzles().rawsCount() + 4) + "A";
         try (final Scanner scanner = new Scanner(input)) {
+            final Pattern pattern = Pattern.compile(EXIT_COMMAND + "|[0-9]+|" + Pattern.quote(CURSOR_UP) + "|" +
+                    Pattern.quote(CURSOR_DOWN) + "|" + Pattern.quote(CURSOR_BACK) + "|" + Pattern.quote(CURSOR_FORWARD));
+
             while (true) {
                 output.println();
                 printPuzzles();
@@ -76,10 +82,41 @@ public class TerminalUI {
                     return;
                 }
                 output.print(CLEAR_LINE + PROMPT_MESSAGE);
-                final String command = scanner.nextLine();
+                final String command;
+                try {
+                    command = scanner.next(pattern);
+                } catch (final InputMismatchException e) {
+                    scanner.next();
+                    output.println(CLEAR_LINE + "Invalid input");
+                    output.print(upCommand);
+                    continue;
+                }
                 if (EXIT_COMMAND.equalsIgnoreCase(command)) {
                     output.println(CLEAR_LINE + EXIT_MESSAGE);
                     return;
+                }
+                Status moveStatus = null;
+                if (command.equals(CURSOR_UP)) {
+                    moveStatus = puzzles.move(Direction.DOWN);
+                }
+                if (command.equals(CURSOR_DOWN)) {
+                    moveStatus = puzzles.move(Direction.UP);
+                }
+                if (command.equals(CURSOR_BACK)) {
+                    moveStatus = puzzles.move(Direction.RIGHT);
+                }
+                if (command.equals(CURSOR_FORWARD)) {
+                    moveStatus = puzzles.move(Direction.LEFT);
+                }
+                if (moveStatus != null) {
+                    if (Status.OUT_OF_BORDER == moveStatus) {
+                        output.println(CLEAR_LINE + "Out of border");
+                    }
+                    if (Status.OK == moveStatus) {
+                        output.println(CLEAR_LINE);
+                    }
+                    output.print(upCommand);
+                    continue;
                 }
                 final int puzzleNumber;
                 try {
@@ -95,20 +132,7 @@ public class TerminalUI {
                         output.println(CLEAR_LINE);
                     }
                 } catch (final NumberFormatException e) {
-                    String commandToWrite = command;
-                    if (command.equals(CURSOR_UP)) {
-                        commandToWrite = "cursor up ";
-                    }
-                    if (command.equals(CURSOR_DOWN)) {
-                        commandToWrite = "cursor down";
-                    }
-                    if (command.equals(CURSOR_BACK)) {
-                        commandToWrite = "cursor back";
-                    }
-                    if (command.equals(CURSOR_FORWARD)) {
-                        commandToWrite = "cursor forward";
-                    }
-                    output.println(CLEAR_LINE + IMPOSSIBLE_TO_PARSE_MESSAGE + commandToWrite);
+                    output.println(CLEAR_LINE + IMPOSSIBLE_TO_PARSE_MESSAGE + command);
                 }
                 output.print(upCommand);
             }
